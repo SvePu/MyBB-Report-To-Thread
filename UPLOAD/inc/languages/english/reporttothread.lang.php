@@ -4,9 +4,14 @@
 * Licensed under GNU/GPL v3
 */
 
-$l['reporttothread_data_1'] = "{1} has reported a post.";
-$l['reporttothread_data_2'] = "Original Thread: {1}";
-$l['reporttothread_data_3'] = "Original Forum: {1}";
-$l['reporttothread_data_4'] = "Report Reason: {1}";
-$l['reporttothread_data_5'] = "Reported Post:";
+$l['reporttothread_subject'] = "Reported post from {1}";
+$l['reporttothread_message'] = "{1} has reported a post.
+
+Original Thread: {2}
+Original Forum: {3}
+
+Report Reason: {4}
+{5}
+Reported Post:
+{6}";
 ?>

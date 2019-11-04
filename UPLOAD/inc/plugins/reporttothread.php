@@ -124,7 +124,7 @@ function reporttothread_run()
         }
 
         $forum_cache = $cache->read("forums");
-        if($mybb->settings['reporttothread_fid'] >= 1 && $forum_cache[$mybb->settings['reporttothread_fid']][type] == "c")
+        if($mybb->settings['reporttothread_fid'] >= 1 && $forum_cache[$mybb->settings['reporttothread_fid']]['type'] == "c")
         {
             return;
         }
