@@ -12,4 +12,6 @@ $l['reporttothread_enable_title'] = "Enable Report to Thread Plugin?";
 $l['reporttothread_enable_title_desc'] = "Select YES to enable the Report to Thread feature!";
 $l['reporttothread_fid_title'] = "Forum for Reports";
 $l['reporttothread_fid_title_desc'] = "Select the forum where the report threads are to be created.";
+$l['reporttothread_modcp_title'] = "Disable ModCP infobar for reports?";
+$l['reporttothread_modcp_title_desc'] = "Select YES to disable the ModCP info bar for the reports where a thread was created for!";
 ?>

@@ -56,6 +56,13 @@ function reporttothread_install()
             'optionscode' => 'forumselectsingle',
             'value' => '',
             'disporder' => 2
+            ),
+        'reporttothread_modcp' => array(
+            'title' => $db->escape_string($lang->reporttothread_modcp_title),
+            'description' => $db->escape_string($lang->reporttothread_modcp_title_desc),
+            'optionscode' => 'yesno',
+            'value' => 1,
+            'disporder' => 3
             )
         );
 
@@ -63,10 +70,8 @@ function reporttothread_install()
     {
         $setting['name'] = $name;
         $setting['gid'] = $gid;
-
         $db->insert_query('settings', $setting);
     }
-
     rebuild_settings();
 }
 
@@ -79,6 +84,18 @@ function reporttothread_is_installed()
     }
     return false;
 
+}
+
+function reportthread_activate()
+{
+    global $db;
+    $db->update_query("settings", array('value' => 1), "name = 'reporttothread_enable'");
+}
+
+function reportthread_deactivate()
+{
+    global $db;
+    $db->update_query("settings", array('value' => 0), "name = 'reporttothread_enable'");
 }
 
 function reporttothread_uninstall()
@@ -101,6 +118,17 @@ function reporttothread_run()
 
     if($mybb->settings['reporttothread_enable'] == 1 && $report_type == 'post')
     {
+        if(empty($mybb->settings['reporttothread_fid']) || $mybb->settings['reporttothread_fid'] == "-1")
+        {
+            return;
+        }
+
+        $forum_cache = $cache->read("forums");
+        if($mybb->settings['reporttothread_fid'] >= 1 && $forum_cache[$mybb->settings['reporttothread_fid']][type] == "c")
+        {
+            return;
+        }
+
         $lang->load('report');
         $lang->load('reporttothread');
 
@@ -171,7 +199,7 @@ function reporttothread_run()
         else
         {
             $thread_info = $posthandler->insert_thread();
-            if($thread_info)
+            if($thread_info && $mybb->settings['reporttothread_modcp'] != 0)
             {
                 $tid = $thread_info['tid'];
                 $db->update_query("reportedcontent", array('reportstatus' => 1), "id = '{$post['pid']}'");
