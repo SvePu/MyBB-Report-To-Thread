@@ -16,10 +16,10 @@ function reporttothread_info()
     return array(
         "name"          =>  $db->escape_string($lang->reporttothread),
         "description"   =>  $db->escape_string($lang->reporttothread_desc),
-        "website"       => "",
+        "website"       => "https://github.com/SvePu/MyBB_Report-To-Thread",
         "author"        => "SvePu",
         "authorsite"    => "https://github.com/SvePu",
-        "version"       => "1.0",
+        "version"       => "1.1",
         "codename"      => "reporttothread",
         "compatibility" => "18*"
     );
