@@ -7,6 +7,7 @@ if(!defined("IN_MYBB"))
 }
 
 $plugins->add_hook('report_do_report_end', 'reporttothread_run');
+$plugins->add_hook('class_moderation_delete_thread', 'reporttothread_delete_thread_from_cache');
 
 function reporttothread_info()
 {
@@ -100,7 +101,7 @@ function reportthread_deactivate()
 
 function reporttothread_uninstall()
 {
-    global $db;
+    global $db, $cache;
     $query = $db->simple_select("settinggroups", "gid", "name='reporttothread_setting'");
     $gid = $db->fetch_field($query, "gid");
     if(!$gid)
@@ -110,11 +111,13 @@ function reporttothread_uninstall()
     $db->delete_query("settinggroups", "name='reporttothread_setting'");
     $db->delete_query("settings", "gid=$gid");
     rebuild_settings();
+
+    $cache->delete('reporttothread');
 }
 
 function reporttothread_run()
 {
-    global $db, $mybb, $report_type, $lang, $cache;
+    global $db, $mybb, $report_type, $lang, $cache, $session;
 
     if($mybb->settings['reporttothread_enable'] == 1 && $report_type == 'post')
     {
@@ -133,6 +136,7 @@ function reporttothread_run()
         $lang->load('reporttothread');
 
         $post = get_post($mybb->get_input('pid', MyBB::INPUT_INT));
+        $reported_pid = $post['pid'];
 
         $thread = get_thread($post['tid']);
         $forum = get_forum($thread['fid']);
@@ -173,38 +177,110 @@ function reporttothread_run()
         $subject = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_subject), $mybb->user['username']);
         $message = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_message), $mybb->user['username'], $pd_thread_link, $pd_forum_link, $reason, $comment, $pd_reported_post);
 
-        require_once MYBB_ROOT."inc/datahandlers/post.php";
-        $posthandler = new PostDataHandler("insert");
-        $posthandler->action = "thread";
-
-        $new_thread = array(
-            "fid" => (int)$mybb->settings['reporttothread_fid'],
-            "prefix" => 0,
-            "subject" => $subject,
-            "icon" => 0,
-            "uid" => (int)$mybb->user['uid'],
-            "username" => $mybb->user['username'],
-            "message" => $message,
-            "ipaddress" => $session->packedip,
-            "posthash" => md5((int)$mybb->user['uid'] . random_str()),
-        );
-
-        $posthandler->set_data($new_thread);
-        $valid_thread = $posthandler->validate_thread();
-
-        if(!$valid_thread)
+        $reportedthread = array();
+        $reportedthread = $cache->read('reporttothread');
+        if(array_key_exists($reported_pid, $reportedthread))
         {
-            $post_errors = $posthandler->get_friendly_errors();
+            $thread_info = reporttothread_build_post($reportedthread[$reported_pid], $subject, $message);
         }
         else
         {
-            $thread_info = $posthandler->insert_thread();
-            if($thread_info && $mybb->settings['reporttothread_modcp'] != 0)
-            {
-                $tid = $thread_info['tid'];
-                $db->update_query("reportedcontent", array('reportstatus' => 1), "id = '{$post['pid']}'");
-                $cache->update_reportedcontent();
-            }
+            $thread_info = reporttothread_build_thread($subject, $message, $reported_pid);
+        }
+
+        if($thread_info && $mybb->settings['reporttothread_modcp'] != 0)
+        {
+            $db->update_query("reportedcontent", array('reportstatus' => 1), "id = '{$post['pid']}'");
+            $cache->update_reportedcontent();
         }
     }
+}
+
+function reporttothread_build_thread($subject, $message, $reported_pid)
+{
+    global $mybb, $session;
+    require_once MYBB_ROOT."inc/datahandlers/post.php";
+    $posthandler = new PostDataHandler("insert");
+    $posthandler->action = "thread";
+
+    $new_thread = array(
+        "fid" => (int)$mybb->settings['reporttothread_fid'],
+        "prefix" => 0,
+        "subject" => $subject,
+        "icon" => 0,
+        "uid" => (int)$mybb->user['uid'],
+        "username" => $mybb->user['username'],
+        "message" => $message,
+        "ipaddress" => $session->packedip,
+        "posthash" => md5((int)$mybb->user['uid'] . random_str()),
+    );
+
+    $posthandler->set_data($new_thread);
+    $valid_thread = $posthandler->validate_thread();
+
+    if($valid_thread)
+    {
+        $thread_info = $posthandler->insert_thread();
+        if($thread_info)
+        {
+            $tid = $thread_info['tid'];
+            reporttothread_cache($reported_pid, $tid);
+        }
+        return $thread_info;
+    }
+}
+
+function reporttothread_build_post($tid, $subject, $message)
+{
+    global $mybb, $session;
+    require_once MYBB_ROOT."inc/datahandlers/post.php";
+    $posthandler = new PostDataHandler("insert");
+
+    $new_post = array(
+        "tid" => (int)$tid,
+        "replyto" => 0,
+        "fid" => (int)$mybb->settings['reporttothread_fid'],
+        "subject" => $subject,
+        "icon" => 0,
+        "uid" => (int)$mybb->user['uid'],
+        "username" => $mybb->user['username'],
+        "message" => $message,
+        "dateline" => TIME_NOW,
+        "ipaddress" => $session->packedip,
+        "posthash" => md5((int)$mybb->user['uid'] . random_str())
+    );
+
+    $posthandler->set_data($new_post);
+    $valid_post = $posthandler->validate_post();
+
+    if($valid_post)
+    {
+        $thread_info = $posthandler->insert_post();
+        return $thread_info;
+    }
+}
+
+function reporttothread_cache($pid, $tid)
+{
+    global $cache;
+    $reportedthread = array();
+    $reportedthread = $cache->read('reporttothread');
+    if($reportedthread)
+    {
+        $reportedthread += [$pid => $tid];
+    }
+    else
+    {
+        $reportedthread = [$pid => $tid];
+    }
+    $cache->update('reporttothread',$reportedthread);
+}
+
+function reporttothread_delete_thread_from_cache($tid)
+{
+    global $cache;
+    $reportedthread = array();
+    $reportedthread = $cache->read('reporttothread');
+    $reportedthread = array_diff($reportedthread,array($tid));
+    $cache->update('reporttothread',$reportedthread);
 }
