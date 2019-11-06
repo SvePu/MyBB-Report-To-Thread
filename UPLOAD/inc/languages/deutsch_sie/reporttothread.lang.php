@@ -15,4 +15,12 @@ Meldungsgrund: {4}
 Gemeldeter Beitrag:
 {6}";
 
+/*** Benutzerdefinierte Meldegrund Unterstützung ***/
+/* 
+* Für die Sprachünterstützung Ihres eigenen Meldegrunds 
+* setzen Sie den Titel des Grunds wie: <lang:report_reason_myreason>
+* und definieren Sie den Grund hier wie:
+*/
+// $l['report_reason_myreason'] = "My Report Reason";
+
 ?>

@@ -14,4 +14,13 @@ $l['reporttothread_fid_title'] = "Forum für die Meldungen";
 $l['reporttothread_fid_title_desc'] = "Wähle das Forum aus, in dem die Meldungens-Threads erstellt werden sollen.";
 $l['reporttothread_modcp_title'] = "ModCP-Infobar für Meldungen deaktivieren?";
 $l['reporttothread_modcp_title_desc'] = "Wähle JA um die ModCP Infobar für die Meldungen auszuschalten, für die ein Thread erstellt wurde!";
+
+/*** Benutzerdefinierte Meldegrund Unterstützung ***/
+/* 
+* Für die Sprachünterstützung deines eigenen Meldegrunds 
+* setze den Titel des Grunds wie: <lang:report_reason_myreason>
+* und definiere den Grund hier wie:
+*/
+// $l['report_reason_myreason'] = "My Report Reason";
+
 ?>

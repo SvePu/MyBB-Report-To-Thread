@@ -14,4 +14,13 @@ $l['reporttothread_fid_title'] = "Forum for Reports";
 $l['reporttothread_fid_title_desc'] = "Select the forum where the report threads are to be created.";
 $l['reporttothread_modcp_title'] = "Disable ModCP infobar for reports?";
 $l['reporttothread_modcp_title_desc'] = "Select YES to disable the ModCP info bar for the reports where a thread was created for!";
+
+/*** Custom Report Reason Support ***/
+/* 
+* For language support of your custom report reason 
+* set the title for new reason at ACP like: <lang:report_reason_myreason>
+* and define your reason here like:
+*/
+// $l['report_reason_myreason'] = "My Report Reason";
+
 ?>

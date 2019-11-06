@@ -6,8 +6,16 @@ if(!defined("IN_MYBB"))
     die("Direct initialization of this file is not allowed.");
 }
 
-$plugins->add_hook('report_do_report_end', 'reporttothread_run');
-$plugins->add_hook('class_moderation_delete_thread', 'reporttothread_delete_thread_from_cache');
+if(defined('IN_ADMINCP'))
+{
+    $plugins->add_hook('admin_config_report_reasons_start', 'reporttothread_acp_load_lang');
+}
+else
+{
+    $plugins->add_hook('report_do_report_end', 'reporttothread_run');
+    $plugins->add_hook('class_moderation_delete_thread', 'reporttothread_delete_thread_from_cache');
+    $plugins->add_hook('global_start', 'reporttothread_load_lang');
+}
 
 function reporttothread_info()
 {
@@ -19,7 +27,7 @@ function reporttothread_info()
         "website"       => "https://github.com/SvePu/MyBB_Report-To-Thread",
         "author"        => "SvePu",
         "authorsite"    => "https://github.com/SvePu",
-        "version"       => "1.1",
+        "version"       => "1.2",
         "codename"      => "reporttothread",
         "compatibility" => "18*"
     );
@@ -142,31 +150,17 @@ function reporttothread_run()
         $forum = get_forum($thread['fid']);
 
         $rid = $mybb->get_input('reason', MyBB::INPUT_INT);
-        switch ($rid) {
-            case 1:
-                $reason = $lang->report_reason_other;
-                break;
-            case 2:
-                $reason = $lang->report_reason_rules;
-                break;
-            case 3:
-                $reason = $lang->report_reason_bad;
-                break;
-            case 4:
-                $reason = $lang->report_reason_spam;
-                break;
-            case 5:
-                $reason = $lang->report_reason_wrong;
-                break;
-        }
+        $query = $db->simple_select("reportreasons", "title,extra", "rid = '{$rid}'");
+        $reasons = $db->fetch_array($query);
+
+        $reason = htmlspecialchars_uni($lang->parse($reasons['title']));
 
         $comment = "";
-        if($rid == 1)
+        if($reasons['extra'])
         {
             if(!empty($mybb->get_input('comment')))
             {
-                $comment = $db->escape_string($mybb->get_input('comment'));
-                $comment = "[quote=\"" . $mybb->user['username'] . "\" dateline=\"" . time() . "\"]" . trim($comment) ."[/quote]\n";
+                $comment = "[quote=\"" . $mybb->user['username'] . "\" dateline=\"" . time() . "\"]" . trim($mybb->get_input('comment')) ."[/quote]\n";
             }
         }
 
@@ -283,4 +277,16 @@ function reporttothread_delete_thread_from_cache($tid)
     $reportedthread = $cache->read('reporttothread');
     $reportedthread = array_diff($reportedthread,array($tid));
     $cache->update('reporttothread',$reportedthread);
+}
+
+function reporttothread_acp_load_lang()
+{
+    global $lang;
+    $lang->load('config_reporttothread');
+}
+
+function reporttothread_load_lang()
+{
+    global $lang;
+    $lang->load('reporttothread');
 }
