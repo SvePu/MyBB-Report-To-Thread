@@ -4,16 +4,33 @@
 * Licensed under GNU/GPL v3
 */
 
-$l['reporttothread_subject'] = "Reported post from {1}";
-$l['reporttothread_message'] = "{1} has reported a post.
+$l['reporttothread_type_post'] = "post";
+$l['reporttothread_type_profile'] = "profile";
+$l['reporttothread_type_reputation'] = "reputation";
 
-Original Thread: {2}
-Original Forum: {3}
+$l['reporttothread_subject'] = "Reported {1} by {2}";
+$l['reporttothread_comment'] = "User {1} has commented: {2}";
 
-Report Reason: {4}
+$l['reporttothread_message_post'] = "[b]{1} has reported a {2}.[/b]
+
+Original Thread: {3}
+Original Forum: {4}
+
+[b][u]Report Reason:[/u][/b] {5}
+{6}
+[b][u]Reported Post:[/u][/b]
+
+{7}";
+$l['reporttothread_message_profile'] = "[b]{1} has reported a {2} of user: {3}[/b]
+
+[b][u]Report Reason:[/u][/b] {4}
+{5}";
+$l['reporttothread_message_reputation'] = "[b]{1} has reported a {2} for {3}.[/b]
+
+[b][u]Report Reason:[/u][/b] {4}
 {5}
-Reported Post:
-{6}";
+Reputation ({6}) was given by {7} for {8}
+{9}";
 
 /*** Custom Report Reason Support ***/
 /* 
@@ -22,5 +39,4 @@ Reported Post:
 * and define your reason here like:
 */
 // $l['report_reason_myreason'] = "My Report Reason";
-
 ?>
