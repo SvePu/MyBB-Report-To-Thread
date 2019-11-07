@@ -4,16 +4,33 @@
 * Licensed under GNU/GPL v3
 */
 
-$l['reporttothread_subject'] = "Gemeldeter Beitrag von {1}";
-$l['reporttothread_message'] = "{1} hat einen Beitrag gemeldet.
+$l['reporttothread_type_post'] = "Beitrag";
+$l['reporttothread_type_profile'] = "Profil";
+$l['reporttothread_type_reputation'] = "Bewertung";
 
-Original Thread: {2}
-Original Forum: {3}
+$l['reporttothread_subject'] = "{1} gemeldet von {2}";
+$l['reporttothread_comment'] = "Nutzer {1} hat dazu kommentiert: {2}";
 
-Meldungsgrund: {4}
+$l['reporttothread_message_post'] = "[b]{1} hat einen {2} gemeldet.[/b]
+
+Originales Thema: {3}
+Originales Forum: {4}
+
+[b][u]Meldungsgrund:[/u][/b] {5}
+{6}
+[b][u]Gemeldeter Beitrag:[/u][/b]
+
+{7}";
+$l['reporttothread_message_profile'] = "[b]{1} hat das {2} von Nutzer: {3} gemeldet.[/b]
+
+[b][u]Meldungsgrund:[/u][/b] {4}
+{5}";
+$l['reporttothread_message_reputation'] = "[b]{1} hat eine {2} für {3} gemeldet.[/b]
+
+[b][u]Meldungsgrund:[/u][/b] {4}
 {5}
-Gemeldeter Beitrag:
-{6}";
+Bewertung ({6}) wurde abgegeben durch {7} für {8}
+{9}";
 
 /*** Benutzerdefinierte Meldegrund Unterstützung ***/
 /* 
