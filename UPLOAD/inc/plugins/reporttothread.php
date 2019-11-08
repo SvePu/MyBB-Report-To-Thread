@@ -215,9 +215,7 @@ function reporttothread_run()
 
     $subject = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_subject), $rtype, $mybb->user['username']);
 
-    $reportedthread = array();
-    $reportedthread = $cache->read('reporttothread');
-    $find_tid = reporttothread_searchForId($reported_id, $report_type, $reportedthread);
+    $find_tid = reporttothread_search_tid($reported_id, $report_type);
     if($find_tid)
     {
         $thread_info = reporttothread_build_post($find_tid, $subject, $message);
@@ -328,14 +326,24 @@ function reporttothread_load_lang()
     $lang->load('reporttothread');
 }
 
-function reporttothread_searchForId($reported_id, $report_type, $array)
+function reporttothread_search_tid($reported_id, $report_type)
 {
-   foreach ($array as $key => $val)
-   {
-       if ($val['id'] == $reported_id && $val['type'] == $report_type)
-       {
-           return $key;
-       }
-   }
-   return false;
+    global $cache;
+    $reportedthread = array();
+    $reportedthread = $cache->read('reporttothread');
+    if($reportedthread)
+    {
+        foreach ($reportedthread as $key => $val)
+        {
+           if ($val['id'] == $reported_id && $val['type'] == $report_type)
+           {
+               return $key;
+           }
+        }
+        return false;
+    }
+    else
+    {
+        return false;
+    }
 }
