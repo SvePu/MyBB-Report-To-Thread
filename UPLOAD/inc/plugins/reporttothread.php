@@ -263,8 +263,9 @@ function reporttothread_build_thread($subject, $message, $reported_id, $report_t
         {
             $tid = $thread_info['tid'];
             reporttothread_cache($tid, $reported_id, $report_type);
+            return $thread_info;
         }
-        return $thread_info;
+        return false;
     }
 }
 
@@ -294,7 +295,11 @@ function reporttothread_build_post($tid, $subject, $message)
     if($valid_post)
     {
         $thread_info = $posthandler->insert_post();
-        return $thread_info;
+        if($thread_info)
+        {
+            return $thread_info;
+        }
+        return false;
     }
 }
 
@@ -344,8 +349,5 @@ function reporttothread_search_tid($reported_id, $report_type)
         }
         return false;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
