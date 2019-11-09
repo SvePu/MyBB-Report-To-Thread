@@ -95,16 +95,18 @@ function reporttothread_is_installed()
 
 }
 
-function reportthread_activate()
+function reporttothread_activate()
 {
     global $db;
     $db->update_query("settings", array('value' => 1), "name = 'reporttothread_enable'");
+    rebuild_settings();
 }
 
-function reportthread_deactivate()
+function reporttothread_deactivate()
 {
     global $db;
     $db->update_query("settings", array('value' => 0), "name = 'reporttothread_enable'");
+    rebuild_settings();
 }
 
 function reporttothread_uninstall()
