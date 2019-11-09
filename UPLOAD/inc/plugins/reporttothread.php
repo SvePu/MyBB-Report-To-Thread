@@ -9,6 +9,8 @@ if(!defined("IN_MYBB"))
 if(defined('IN_ADMINCP'))
 {
     $plugins->add_hook('admin_config_report_reasons_start', 'reporttothread_acp_load_lang');
+    $plugins->add_hook("admin_config_settings_change",'reporttothread_settings_page');
+    $plugins->add_hook("admin_page_output_footer",'reporttothread_settings_peeker');
 }
 else
 {
@@ -19,18 +21,30 @@ else
 
 function reporttothread_info()
 {
-    global $db, $lang;
+    global $db, $lang, $plugins_cache;
     $lang->load('config_reporttothread');
-    return array(
+    $info = array(
         "name"          =>  $db->escape_string($lang->reporttothread),
         "description"   =>  $db->escape_string($lang->reporttothread_desc),
         "website"       => "https://github.com/SvePu/MyBB_Report-To-Thread",
         "author"        => "SvePu",
         "authorsite"    => "https://github.com/SvePu",
-        "version"       => "1.3",
+        "version"       => "1.4",
         "codename"      => "reporttothread",
         "compatibility" => "18*"
     );
+
+    if(is_array($plugins_cache) && is_array($plugins_cache['active']) && $plugins_cache['active']['reporttothread'])
+    {
+        $gid_result = $db->simple_select('settinggroups', 'gid', "name = 'reporttothread_setting'", array('limit' => 1));
+        $settings_group = $db->fetch_array($gid_result);
+        if(!empty($settings_group['gid']))
+        {
+            $info['description'] = "<span style=\"font-size: 0.9em;\">(~<a href=\"index.php?module=config-settings&action=change&gid=".$settings_group['gid']."\"> ".$db->escape_string($lang->reporttothread_settings_title)." </a>~)</span><br />" .$info['description'];
+        }
+    }
+
+    return $info;
 }
 
 function reporttothread_install()
@@ -66,12 +80,26 @@ function reporttothread_install()
             'value' => '',
             'disporder' => 2
             ),
+        'reporttothread_type' => array(
+            'title' => $db->escape_string($lang->reporttothread_type_title),
+            'description' => $db->escape_string($lang->reporttothread_type_title_desc),
+            'optionscode' => 'checkbox \n1='. $db->escape_string($lang->reporttothread_type_post). '\n2='. $db->escape_string($lang->reporttothread_type_profile). '\n3='.$db->escape_string($lang->reporttothread_type_reputation),
+            'value' => '1,2,3',
+            'disporder' => 3
+            ),
+        'reporttothread_type_post_cutoff' => array(
+            'title' => $db->escape_string($lang->reporttothread_type_post_cutoff_title),
+            'description' => $db->escape_string($lang->reporttothread_type_post_cutoff_title_desc),
+            'optionscode' => 'numeric',
+            'value' => '1000',
+            'disporder' => 4
+            ),
         'reporttothread_modcp' => array(
             'title' => $db->escape_string($lang->reporttothread_modcp_title),
             'description' => $db->escape_string($lang->reporttothread_modcp_title_desc),
             'optionscode' => 'yesno',
             'value' => 1,
-            'disporder' => 3
+            'disporder' => 5
             )
         );
 
@@ -125,11 +153,33 @@ function reporttothread_uninstall()
     $cache->delete('reporttothread');
 }
 
+function reporttothread_settings_page()
+{
+    global $db, $mybb, $rtt_settings_peeker;
+    $query = $db->simple_select("settinggroups", "gid", "name='reporttothread_setting'", array('limit' => 1));
+    $group = $db->fetch_array($query);
+    $rtt_settings_peeker = ($mybb->input["gid"] == $group["gid"]) && ($mybb->request_method != "post");
+}
+
+function reporttothread_settings_peeker()
+{
+    global $rtt_settings_peeker;
+    if($rtt_settings_peeker)
+    {
+        echo '<script type="text/javascript">
+        $(document).ready(function(){
+            new Peeker($(".setting_reporttothread_enable"), $("#row_setting_reporttothread_fid, #row_setting_reporttothread_type, #row_setting_reporttothread_modcp"), 1, true),
+            new Peeker($("#setting_reporttothread_type_1"), $("#row_setting_reporttothread_type_post_cutoff"), 1, true);
+        });
+        </script>';
+    }
+}
+
 function reporttothread_run()
 {
     global $db, $mybb, $report_type, $lang, $cache, $session;
 
-    if($mybb->settings['reporttothread_enable'] != 1)
+    if($mybb->settings['reporttothread_enable'] != 1 || empty($mybb->settings['reporttothread_type']))
     {
         return;
     }
@@ -165,6 +215,10 @@ function reporttothread_run()
 
     switch ($report_type) {
         case 'post':
+            if(!in_array(1, explode(',', $mybb->settings['reporttothread_type'])))
+            {
+                return;
+            }
             $post = get_post($mybb->get_input('pid', MyBB::INPUT_INT));
             $reported_id = $post['pid'];
             $rtype = htmlspecialchars_uni($lang->reporttothread_type_post);
@@ -174,14 +228,18 @@ function reporttothread_run()
 
             $pd_thread_link = "[url=" . $mybb->settings['bburl'] . "/" . get_thread_link($thread['tid']) . "]" . $thread['subject'] . "[/url]";
             $pd_forum_link = "[url=" . $mybb->settings['bburl'] . "/" . get_forum_link($thread['fid']) . "]" . $forum['name'] . "[/url]";
-            if(my_strlen($post['message']) > 1000)
+            if($mybb->settings['reporttothread_type_post_cutoff'] > 0 && my_strlen($post['message']) > $mybb->settings['reporttothread_type_post_cutoff'])
             {
-                $post['message'] = my_substr($post['message'], 0, 997)."...";
+                $post['message'] = my_substr($post['message'], 0, $mybb->settings['reporttothread_type_post_cutoff'] - 3)."...";
             }
             $pd_reported_post = "[quote=\"" . $post['username'] . "\" pid=\"" . $post['pid'] . "\" dateline=\"" . $post['dateline'] . "\"]" . $post['message'] . "[/quote]";
             $message = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_message_post), $mybb->user['username'], $rtype, $pd_thread_link, $pd_forum_link, $reason, $comment, $pd_reported_post);
             break;
         case 'profile':
+            if(!in_array(2, explode(',', $mybb->settings['reporttothread_type'])))
+            {
+                return;
+            }
             $user = get_user($mybb->get_input('pid', MyBB::INPUT_INT));
             $reported_id = $user['uid'];
             $rtype = htmlspecialchars_uni($lang->reporttothread_type_profile);
@@ -189,6 +247,10 @@ function reporttothread_run()
             $message = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_message_profile), $mybb->user['username'], $rtype, $userlink, $reason, $comment);
             break;
         case 'reputation':
+            if(!in_array(3, explode(',', $mybb->settings['reporttothread_type'])))
+            {
+                return;
+            }
             $query1 = $db->simple_select("reputation", "*", "rid = '".$mybb->get_input('pid', MyBB::INPUT_INT)."'");
             $reputation = $db->fetch_array($query1);
             $reported_id = $reputation['rid'];
