@@ -152,7 +152,13 @@ function reporttothread_deactivate()
 
 function reporttothread_uninstall()
 {
-    global $db, $cache;
+    global $db, $mybb, $cache;
+    if($mybb->request_method != 'post')
+    {
+        global $page, $lang;
+        $lang->load('reporttothread', true);
+        $page->output_confirm_action('index.php?module=config-plugins&action=deactivate&uninstall=1&plugin=reporttothread', $lang->reporttothread_uninstall_message, $lang->reporttothread_uninstall);
+    }
     $query = $db->simple_select("settinggroups", "gid", "name='reporttothread'");
     $gid = $db->fetch_field($query, "gid");
     if(!$gid)
@@ -163,7 +169,10 @@ function reporttothread_uninstall()
     $db->delete_query("settings", "gid=$gid");
     rebuild_settings();
 
-    $cache->delete('reporttothread');
+    if(!isset($mybb->input['no']))
+    {
+        $cache->delete('reporttothread');
+    }
 }
 
 function reporttothread_load_lang()

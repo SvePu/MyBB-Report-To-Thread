@@ -29,6 +29,9 @@ $l['setting_reporttothread_type_4'] = "Private Messages";
 $l['setting_reporttothread_type_post_cutoff'] = "Show cutted Content of reported Posts?";
 $l['setting_reporttothread_type_post_cutoff_desc'] = "Set the number of characters after which the content of the reported posts is cut off. (0 disables the option, default: 1000)";
 
+$l['reporttothread_uninstall'] = "Report to Thread - Uninstallation";
+$l['reporttothread_uninstall_message'] = "Do you wish to drop the plugin datacache?";
+
 /********** Forum Pages *************/
 $l['reporttothread_type_post'] = "post";
 $l['reporttothread_type_profile'] = "profile";

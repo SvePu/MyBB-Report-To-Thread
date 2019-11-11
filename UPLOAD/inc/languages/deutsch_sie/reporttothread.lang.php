@@ -29,6 +29,9 @@ $l['setting_reporttothread_type_4'] = "Privaten Nachrichten";
 $l['setting_reporttothread_type_post_cutoff'] = "Inhalt gemeldeter Beiträge verkürzt darstellen?";
 $l['setting_reporttothread_type_post_cutoff_desc'] = "Setzen Sie die Anzahl der Zeichen nach der der Inhalt des gemeldeten Beitrags abgeschnitten wird. (0 deaktiviert die Option, Standart: 1000)";
 
+$l['reporttothread_uninstall'] = "Report to Thread - Deinstallation";
+$l['reporttothread_uninstall_message'] = "Solle auch der Datencache des Plugins gelöscht werden?";
+
 /********** Forum Seiten *************/
 $l['reporttothread_type_post'] = "Beitrag";
 $l['reporttothread_type_profile'] = "Profil";
