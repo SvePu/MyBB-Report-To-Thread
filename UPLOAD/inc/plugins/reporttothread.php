@@ -32,7 +32,7 @@ function reporttothread_info()
         "website"       => "https://github.com/SvePu/MyBB_Report-To-Thread",
         "author"        => "SvePu",
         "authorsite"    => "https://github.com/SvePu",
-        "version"       => "1.4",
+        "version"       => "1.5",
         "codename"      => "reporttothread",
         "compatibility" => "18*"
     );
