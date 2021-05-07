@@ -128,7 +128,6 @@ function reporttothread_is_installed()
         return true;
     }
     return false;
-
 }
 
 function reporttothread_activate()
