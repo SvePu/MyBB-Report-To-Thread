@@ -69,11 +69,9 @@ $l['reporttothread_message_privatemessage'] = "[b]{1} hat eine {2} von {3} gemel
 {6}";
 
 /*** Benutzerdefinierte Meldegrund Unterstützung ***/
-/* 
-* Für die Sprachünterstützung Ihres eigenen Meldegrunds 
+/*
+* Für die Sprachünterstützung Ihres eigenen Meldegrunds
 * setzen Sie den Titel des Grunds wie: <lang:report_reason_myreason>
 * und definieren Sie den Grund hier wie:
 */
 // $l['report_reason_myreason'] = "My Report Reason";
-
-?>

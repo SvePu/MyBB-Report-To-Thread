@@ -69,10 +69,9 @@ $l['reporttothread_message_privatemessage'] = "[b]{1} has reported a {2} from {3
 {6}";
 
 /*** Custom Report Reason Support ***/
-/* 
-* For language support of your custom report reason 
+/*
+* For language support of your custom report reason
 * set the title for new reason at ACP like: <lang:report_reason_myreason>
 * and define your reason here like:
 */
 // $l['report_reason_myreason'] = "My Report Reason";
-?>

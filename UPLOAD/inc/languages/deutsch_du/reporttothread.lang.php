@@ -61,6 +61,7 @@ $l['reporttothread_message_reputation'] = "[b]{1} hat eine {2} für {3} gemeldet
 {5}
 Bewertung ({6}) wurde abgegeben durch {7} für {8}
 {9}";
+
 $l['reporttothread_message_privatemessage'] = "[b]{1} hat eine {2} von {3} gemeldet.[/b]
 
 [b][u]Meldungsgrund:[/u][/b] {4}
@@ -68,10 +69,9 @@ $l['reporttothread_message_privatemessage'] = "[b]{1} hat eine {2} von {3} gemel
 {6}";
 
 /*** Benutzerdefinierte Meldegrund Unterstützung ***/
-/* 
-* Für die Sprachünterstützung deines eigenen Meldegrunds 
+/*
+* Für die Sprachünterstützung deines eigenen Meldegrunds
 * setze den Titel des Grunds wie: <lang:report_reason_myreason>
 * und definiere den Grund hier wie:
 */
 // $l['report_reason_myreason'] = "My Report Reason";
-?>
