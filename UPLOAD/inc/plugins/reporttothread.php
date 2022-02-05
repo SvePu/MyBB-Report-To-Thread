@@ -422,7 +422,10 @@ function reporttothread_cache($tid, $reported_id = "", $report_type = "")
     }
     else
     {
-        unset($reportedthread[$tid]);
+        if (array_key_exists($tid, $reportedthread))
+        {
+            unset($reportedthread[$tid]);
+        }
     }
     $cache->update('reporttothread', $reportedthread);
 }
