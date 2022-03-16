@@ -29,6 +29,19 @@ $l['setting_reporttothread_type_4'] = "Private Messages";
 $l['setting_reporttothread_type_post_cutoff'] = "Show cutted Content of reported Posts?";
 $l['setting_reporttothread_type_post_cutoff_desc'] = "Set the number of characters after which the content of the reported posts is cut off. (0 disables the option, default: 1000)";
 
+$l['setting_reporttothread_autoclose'] = "Auto Closing of Report Message";
+$l['setting_reporttothread_autoclose_desc'] = "Wähle JA um diese Funktion zu aktivieren!";
+
+$l['setting_reporttothread_autoclose_uid'] = "User ID of Close Message";
+$l['setting_reporttothread_autoclose_uid_desc'] = "Wähle hier die ID des Benutzers aus, mit der die Schließungsnachricht eingefügt wird.";
+
+$l['setting_reporttothread_autoclose_subject'] = "Subject of Close Message";
+$l['setting_reporttothread_autoclose_subject_desc'] = "Gib hier den Betreff der Schließungsnachrich an.";
+
+$l['setting_reporttothread_autoclose_message'] = "Content of Close Message";
+$l['setting_reporttothread_autoclose_message_desc'] = "Definiere hie den Inhalt der Schließungsnachricht.";
+$l['setting_reporttothread_autoclose_message_value'] = "[b]Since the reason for this report has been omitted or deleted, this thread will now be closed automatically![/b]";
+
 $l['reporttothread_uninstall'] = "Report to Thread - Uninstallation";
 $l['reporttothread_uninstall_message'] = "Do you wish to drop the plugin datacache?";
 

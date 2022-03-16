@@ -29,6 +29,19 @@ $l['setting_reporttothread_type_4'] = "Privaten Nachrichten";
 $l['setting_reporttothread_type_post_cutoff'] = "Inhalt gemeldeter Beiträge verkürzt darstellen?";
 $l['setting_reporttothread_type_post_cutoff_desc'] = "Setze die Anzahl der Zeichen nach der der Inhalt des gemeldeten Beitrags abgeschnitten wird. (0 deaktiviert die Option, Standart: 1000)";
 
+$l['setting_reporttothread_autoclose'] = "Automatisches Schließen der Meldungsthreads";
+$l['setting_reporttothread_autoclose_desc'] = "Wähle JA um diese Funktion zu aktivieren!";
+
+$l['setting_reporttothread_autoclose_uid'] = "BenutzerID der Schließungsnachricht";
+$l['setting_reporttothread_autoclose_uid_desc'] = "Wähle hier die ID des Benutzers aus, mit der die Schließungsnachricht eingefügt wird.";
+
+$l['setting_reporttothread_autoclose_subject'] = "Betreff der Schließungsnachricht";
+$l['setting_reporttothread_autoclose_subject_desc'] = "Gib hier den Betreff der Schließungsnachrich an.";
+
+$l['setting_reporttothread_autoclose_message'] = "Inhalt der Schließungsnachricht";
+$l['setting_reporttothread_autoclose_message_desc'] = "Definiere hier den Inhalt der Schließungsnachricht.";
+$l['setting_reporttothread_autoclose_message_value'] = "[b]Da der Grund dieser Meldung entfallen ist bzw. gelöscht wurde, wird dieser Thread nun automatisch geschlossen![/b]";
+
 $l['reporttothread_uninstall'] = "Report to Thread - Deinstallation";
 $l['reporttothread_uninstall_message'] = "Solle auch der Datencache des Plugins gelöscht werden?";
 
