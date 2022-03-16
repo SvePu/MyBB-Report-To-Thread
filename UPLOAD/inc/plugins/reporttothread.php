@@ -235,9 +235,10 @@ function reporttothread_run()
     $comment = "";
     if ($reasons['extra'])
     {
-        if (!empty($mybb->get_input('comment')))
+        $comment = $mybb->get_input('comment');
+        if (!empty($comment))
         {
-            $comment = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_comment), $mybb->user['username'], trim($mybb->get_input('comment'))) . "\n";
+            $comment = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_comment), $mybb->user['username'], trim($comment)) . "\n";
         }
     }
 
