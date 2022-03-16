@@ -1,4 +1,4 @@
-# MyBB_Report-To-Thread
+# MyBB Report To Thread
 Simple MyBB 1.8 plugin to create a thread on post, profile or reputation reports
 
 --------------------------------
