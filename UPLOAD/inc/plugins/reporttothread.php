@@ -36,7 +36,7 @@ function reporttothread_info()
     $info = array(
         "name"          => $db->escape_string($lang->reporttothread),
         "description"   => $db->escape_string($lang->reporttothread_desc),
-        "website"       => "https://github.com/SvePu/MyBB_Report-To-Thread",
+        "website"       => "https://github.com/SvePu/MyBB-Report-To-Thread",
         "author"        => "SvePu",
         "authorsite"    => "https://github.com/SvePu",
         "version"       => "1.5",
