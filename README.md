@@ -1,3 +1,4 @@
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.0-8892BF.svg)](https://php.net/)
 # MyBB Report To Thread
 Simple MyBB 1.8 plugin to create a thread on post, profile or reputation reports
 
