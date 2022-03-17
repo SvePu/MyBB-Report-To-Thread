@@ -395,7 +395,7 @@ function reporttothread_build_thread(string $subject, string $message, int $repo
     }
 }
 
-function reporttothread_build_post(int $tid, bool $closeit = false, string $subject = NULL, string $message = NULL)
+function reporttothread_build_post(int $tid, bool $closeit = false, string $subject = '', string $message = '')
 {
     global $mybb, $session;
     require_once MYBB_ROOT . "inc/datahandlers/post.php";
