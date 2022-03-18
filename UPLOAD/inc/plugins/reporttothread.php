@@ -8,7 +8,7 @@ if (!defined("IN_MYBB"))
 if (defined('IN_ADMINCP'))
 {
     $plugins->add_hook('admin_config_report_reasons_start', 'reporttothread_load_lang');
-    $plugins->add_hook("admin_config_settings_begin", 'reporttothread_settings_page');
+    $plugins->add_hook("admin_config_settings_begin", 'reporttothread_load_lang');
     $plugins->add_hook('admin_settings_print_peekers', 'reporttothread_settings_peeker');
 }
 else
@@ -195,12 +195,6 @@ function reporttothread_uninstall()
 }
 
 function reporttothread_load_lang()
-{
-    global $lang;
-    $lang->load('reporttothread', true);
-}
-
-function reporttothread_settings_page()
 {
     global $lang;
     $lang->load('reporttothread', true);
