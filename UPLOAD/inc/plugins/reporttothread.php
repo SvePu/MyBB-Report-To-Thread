@@ -46,8 +46,8 @@ function reporttothread_info()
 
     if (is_array($plugins_cache) && is_array($plugins_cache['active']) && $plugins_cache['active']['reporttothread'])
     {
-        $query = $db->simple_select('settinggroups', 'gid AS GID', "name = 'reporttothread'", array('limit' => 1));
-        $settings_group = (int)$db->fetch_field($query, 'GID');
+        $query = $db->simple_select('settinggroups', 'gid', "name = 'reporttothread'", array('limit' => 1));
+        $settings_group = (int)$db->fetch_field($query, 'gid');
         if ($settings_group)
         {
             $info['description'] =  $info['description'] . "<br /><span style=\"line-height: 2.5em;display: inline-block;font-weight: 600;font-style: italic;\"><a href=\"index.php?module=config-settings&amp;action=change&amp;gid=" . $settings_group . "\"><img style=\"vertical-align: sub;\" src=\"./styles/default/images/icons/custom.png\" title=\"" . $db->escape_string($lang->setting_group_reporttothread) . "\" alt=\"settings_icon\" width=\"16\" height=\"16\" />&nbsp;" . $db->escape_string($lang->setting_group_reporttothread) . "</a></span>";
