@@ -141,6 +141,8 @@ function reporttothread_install()
     {
         rebuild_settings();
     }
+
+    reporttothread_update();
 }
 
 function reporttothread_is_installed()
@@ -193,6 +195,33 @@ function reporttothread_uninstall()
         global $cache;
         $cache->delete('reporttothread');
     }
+}
+
+function reporttothread_update()
+{
+    $plugininfo = reporttothread_info();
+
+    if (!is_array($plugininfo))
+    {
+        return;
+    }
+
+    if (!isset($plugininfo['versioninfo']) || (isset($plugininfo['versioninfo']) && $plugininfo['versioninfo'] < 16))
+    {
+        global $cache;
+        $reportedthread = $cache->read('reporttothread');
+        if ($reportedthread && is_array($reportedthread))
+        {
+            $updatereportedthread = array();
+            foreach ($reportedthread as $key => $value)
+            {
+                $updatereportedthread['reports'][$key] = $value;
+            }
+            $cache->update('reporttothread', $updatereportedthread);
+        }
+    }
+
+    return;
 }
 
 function reporttothread_load_lang()
