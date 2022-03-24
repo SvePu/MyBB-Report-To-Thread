@@ -11,7 +11,7 @@ Simple MyBB 1.8 plugin to create a thread on post, profile or reputation reports
 * check the plugin settings at configuration
 
 **Full Update:**
-* uninstall plugin from ACP
+* uninstall plugin from ACP (If you want keep your datacache entries - select NO on uninstall confirmation dialog)
 * unzip new package
 * copy content from "UPLOAD" folder to the forum root on server
 * install & activate the plugn from ACP
