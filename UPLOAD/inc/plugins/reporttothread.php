@@ -40,7 +40,7 @@ function reporttothread_info()
         "author"        => "SvePu",
         "authorsite"    => "https://github.com/SvePu",
         "version"       => "1.6",
-        "versioncode"   => "16",
+        "versioncode"   => "160",
         "codename"      => "reporttothread",
         "compatibility" => "18*"
     );
@@ -206,7 +206,7 @@ function reporttothread_update()
         return;
     }
 
-    if (!isset($plugininfo['versioninfo']) || (isset($plugininfo['versioninfo']) && $plugininfo['versioninfo'] < 16))
+    if (!isset($plugininfo['versioncode']) || (isset($plugininfo['versioncode']) && $plugininfo['versioncode'] < 160))
     {
         global $cache;
         $reportedthread = $cache->read('reporttothread');
