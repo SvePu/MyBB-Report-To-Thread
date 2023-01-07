@@ -19,6 +19,8 @@ else
     $plugins->add_hook('modcp_start', 'reporttothread_load_lang');
 }
 
+global $mybb;
+
 if (isset($mybb->settings['reporttothread_autoclose']) && $mybb->settings['reporttothread_autoclose'] == 1)
 {
     $plugins->add_hook('class_moderation_delete_post', 'reporttothread_deleted_post');
@@ -45,7 +47,7 @@ function reporttothread_info()
         "compatibility" => "18*"
     );
 
-    if (is_array($plugins_cache) && is_array($plugins_cache['active']) && $plugins_cache['active']['reporttothread'])
+    if (is_array($plugins_cache) && is_array($plugins_cache['active']) && isset($plugins_cache['active']['reporttothread']))
     {
         $query = $db->simple_select('settinggroups', 'gid', "name = 'reporttothread'", array('limit' => 1));
         $settings_group = (int)$db->fetch_field($query, 'gid');
@@ -396,10 +398,12 @@ function reporttothread_build_thread(string $subject, string $message, int $repo
         "message" => $message,
         "ipaddress" => $session->packedip,
         "posthash" => md5((int)$mybb->user['uid'] . random_str()),
+        "savedraft" => 0
     );
 
     $new_thread['options'] = array(
         'signature' => 0,
+        'subscriptionmethod' => 0,
         'disablesmilies' => 0
     );
 
@@ -470,12 +474,14 @@ function reporttothread_build_post(int $tid, bool $closeit = false, string $subj
         "message" => $message,
         "dateline" => TIME_NOW,
         "ipaddress" => $session->packedip,
-        "posthash" => md5((int)$mybb->user['uid'] . random_str())
+        "posthash" => md5((int)$mybb->user['uid'] . random_str()),
+        "savedraft" => 0
     );
 
     $new_post['options'] = array(
-        'signature' => 0,
-        'disablesmilies' => 0
+        "signature" => 0,
+        "subscriptionmethod" => 0,
+        "disablesmilies" => 0
     );
 
     $posthandler->set_data($new_post);
@@ -503,13 +509,14 @@ function reporttothread_cache(int $tid, string $reported_id = "", string $report
     global $cache;
     $reportedthread = array();
     $reportedthread = $cache->read('reporttothread');
+
     if (!empty($reported_id) && !empty($report_type))
     {
         $reportedthread['reports'][$tid] = array('id' => $reported_id, 'type' => $report_type);
     }
     else
     {
-        if (array_key_exists($tid, $reportedthread['reports']))
+        if (isset($reportedthread['reports']) && array_key_exists($tid, $reportedthread['reports']))
         {
             unset($reportedthread['reports'][$tid]);
             if (empty($reportedthread['reports']))
@@ -518,6 +525,7 @@ function reporttothread_cache(int $tid, string $reported_id = "", string $report
             }
         }
     }
+
     $cache->update('reporttothread', $reportedthread);
 }
 
@@ -526,7 +534,7 @@ function reporttothread_search_tid(int $reported_id, string $report_type)
     global $cache;
     $reportedthread = array();
     $reportedthread = $cache->read('reporttothread');
-    if ($reportedthread['reports'])
+    if (isset($reportedthread['reports']) && !empty($reportedthread['reports']))
     {
         foreach ($reportedthread['reports'] as $tid => $val)
         {
@@ -651,9 +659,9 @@ function reporttothread_mass_deleted_pm()
     }
 }
 
-function reporttothread_deleted_user($datahandler)
+function reporttothread_deleted_user($users)
 {
-    foreach ($datahandler->delete_uids as $key => $uid)
+    foreach ($users->delete_uids as $key => $uid)
     {
         $tid = false;
         $tid = reporttothread_search_tid($uid, 'profile');
@@ -687,7 +695,7 @@ function reporttothread_checkfor_reportpm()
 {
     global $db, $plugins_cache, $lang;
 
-    if (is_array($plugins_cache) && is_array($plugins_cache['active']) && $plugins_cache['active']['reportpm'])
+    if (is_array($plugins_cache) && is_array($plugins_cache['active']) && isset($plugins_cache['active']['reportpm']))
     {
         $setting_update = array(
             'optionscode' => 'checkbox \n1=' . $db->escape_string($lang->setting_reporttothread_type_1) . '\n2=' . $db->escape_string($lang->setting_reporttothread_type_2) . '\n3=' . $db->escape_string($lang->setting_reporttothread_type_3) . '\n4=' . $db->escape_string($lang->setting_reporttothread_type_4),
