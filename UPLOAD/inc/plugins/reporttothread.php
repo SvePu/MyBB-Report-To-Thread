@@ -19,7 +19,12 @@ else
     $plugins->add_hook('modcp_start', 'reporttothread_load_lang');
 }
 
-global $mybb;
+global $mybb, $lang;
+
+if (!isset($lang->slaps))
+{
+    $lang->load('global');
+}
 
 if (isset($mybb->settings['reporttothread_autoclose']) && $mybb->settings['reporttothread_autoclose'] == 1)
 {
@@ -102,7 +107,7 @@ function reporttothread_install()
         ),
         'autoclose_uid' => array(
             'optionscode' => 'numeric \n min=1',
-            'value' => 0
+            'value' => 1
         ),
         'autoclose_subject' => array(
             'optionscode' => 'text',
@@ -473,7 +478,7 @@ function reporttothread_build_post(int $tid, bool $closeit = false, string $subj
         "username" => $username,
         "message" => $message,
         "dateline" => TIME_NOW,
-        "ipaddress" => $session->packedip,
+        "ipaddress" => '127.0.0.0', //$session->packedip,
         "posthash" => md5((int)$mybb->user['uid'] . random_str()),
         "savedraft" => 0
     );
