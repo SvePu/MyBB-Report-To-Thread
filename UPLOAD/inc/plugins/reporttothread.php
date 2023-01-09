@@ -468,6 +468,13 @@ function reporttothread_build_post(int $tid, bool $closeit = false, string $subj
         }
     }
 
+    if (!isset($session))
+    {
+        require_once MYBB_ROOT . "inc/class_session.php";
+        $session = new session;
+        $session->init();
+    }
+
     $new_post = array(
         "tid" => (int)$tid,
         "replyto" => 0,
@@ -478,7 +485,7 @@ function reporttothread_build_post(int $tid, bool $closeit = false, string $subj
         "username" => $username,
         "message" => $message,
         "dateline" => TIME_NOW,
-        "ipaddress" => '127.0.0.0', //$session->packedip,
+        "ipaddress" => $session->packedip,
         "posthash" => md5((int)$mybb->user['uid'] . random_str()),
         "savedraft" => 0
     );
