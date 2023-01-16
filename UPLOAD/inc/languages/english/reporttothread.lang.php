@@ -1,6 +1,6 @@
 <?php
 /*
-* Report to Thread - 1.0 Language File English
+* Report to Thread - 1.7 Language File English
 * Licensed under GNU/GPL v3
 */
 
@@ -35,19 +35,17 @@ $l['setting_reporttothread_autoclose_desc'] = "Select YES to enable this feature
 $l['setting_reporttothread_autoclose_uid'] = "User ID of Close Message";
 $l['setting_reporttothread_autoclose_uid_desc'] = "Select the ID of the user here, with which the closure message will be inserted.";
 
-$l['setting_reporttothread_autoclose_subject'] = "Subject of Close Message";
-$l['setting_reporttothread_autoclose_subject_desc'] = "Enter the subject of the closure message here. (optional - leave it empty if you like to display RE: + thread subject.)";
-
-$l['setting_reporttothread_autoclose_message'] = "Content of Close Message";
-$l['setting_reporttothread_autoclose_message_desc'] = "Define the content of the closure message here.";
-$l['setting_reporttothread_autoclose_message_value'] = "[b]Since the reason for this report has been omitted or deleted, this thread will now be closed automatically![/b]";
-
 $l['reporttothread_uninstall'] = "Report to Thread - Uninstallation";
 $l['reporttothread_uninstall_message'] = "Do you wish to drop the plugin datacache?";
 
+$l['error_setting_reporttothread_fid_no_forum_selected'] = "You have to select a forum to create threads in!";
+$l['error_setting_reporttothread_fid_category_selected'] = "You have to select a forum not a category!";
+
 /********** Forum Pages *************/
 $l['reporttothread_type_post'] = "post";
+$l['reporttothread_type_thread'] = "thread";
 $l['reporttothread_type_profile'] = "profile";
+$l['reporttothread_type_account'] = "user account";
 $l['reporttothread_type_reputation'] = "reputation";
 $l['reporttothread_type_privatemessage'] = "private message";
 
@@ -80,6 +78,9 @@ $l['reporttothread_message_privatemessage'] = "[b]{1} has reported a {2} from {3
 [b][u]Report Reason:[/u][/b] {4}
 {5}
 {6}";
+
+$l['reporttothread_autoclose_message'] = "This thread was now be closed automatically, because the reported [b]{1}[/b] was [b]deleted[/b]!";
+$l['reporttothread_autoclose_message_default'] = "Since the reason for this report has been [b]omitted[/b] or [b]deleted[/b], this thread will now be closed automatically!";
 
 /*** Custom Report Reason Support ***/
 /*

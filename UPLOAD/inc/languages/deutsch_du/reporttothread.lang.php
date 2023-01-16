@@ -1,6 +1,6 @@
 <?php
 /*
-* Report to Thread - 1.0 Language File German (informal)
+* Report to Thread - 1.7 Language File German (informal)
 * Licensed under GNU/GPL v3
 */
 
@@ -35,19 +35,17 @@ $l['setting_reporttothread_autoclose_desc'] = "Wähle JA um diese Funktion zu ak
 $l['setting_reporttothread_autoclose_uid'] = "BenutzerID der Schließungsnachricht";
 $l['setting_reporttothread_autoclose_uid_desc'] = "Wähle hier die ID des Benutzers aus, mit der die Schließungsnachricht eingefügt wird.";
 
-$l['setting_reporttothread_autoclose_subject'] = "Betreff der Schließungsnachricht";
-$l['setting_reporttothread_autoclose_subject_desc'] = "Gib hier den Betreff der Schließungsnachrich an.";
-
-$l['setting_reporttothread_autoclose_message'] = "Inhalt der Schließungsnachricht";
-$l['setting_reporttothread_autoclose_message_desc'] = "Definiere hier den Inhalt der Schließungsnachricht.";
-$l['setting_reporttothread_autoclose_message_value'] = "[b]Da der Grund dieser Meldung entfallen ist bzw. gelöscht wurde, wird dieser Thread nun automatisch geschlossen![/b]";
-
 $l['reporttothread_uninstall'] = "Report to Thread - Deinstallation";
 $l['reporttothread_uninstall_message'] = "Solle auch der Datencache des Plugins gelöscht werden?";
 
+$l['error_setting_reporttothread_fid_no_forum_selected'] = "Du musst ein Forum auswählen, in dem die Themen erstellt werden können!";
+$l['error_setting_reporttothread_fid_category_selected'] = "Du musst ein Forum auswählen und keine Kategorie!";
+
 /********** Forum Seiten *************/
 $l['reporttothread_type_post'] = "Beitrag";
+$l['reporttothread_type_thread'] = "Thread";
 $l['reporttothread_type_profile'] = "Profil";
+$l['reporttothread_type_account'] = "Benutzer Account";
 $l['reporttothread_type_reputation'] = "Bewertung";
 $l['reporttothread_type_privatemessage'] = "Private Nachricht";
 
@@ -80,6 +78,9 @@ $l['reporttothread_message_privatemessage'] = "[b]{1} hat eine {2} von {3} gemel
 [b][u]Meldungsgrund:[/u][/b] {4}
 {5}
 {6}";
+
+$l['reporttothread_autoclose_message'] = "Dieser Thread wurde jetzt automatisch geschlossen, weil der/die gemeldete [b]{1}[/b] [b]gelöscht[/b] wurde!";
+$l['reporttothread_autoclose_message_default'] = "[b]Da der Grund dieser Meldung [b]entfallen[/b] ist bzw. [b]gelöscht[/b] wurde, wird dieser Thread nun automatisch geschlossen!";
 
 /*** Benutzerdefinierte Meldegrund Unterstützung ***/
 /*

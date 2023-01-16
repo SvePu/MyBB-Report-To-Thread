@@ -9,6 +9,7 @@ if (defined('IN_ADMINCP'))
 {
     $plugins->add_hook('admin_config_report_reasons_start', 'reporttothread_load_lang');
     $plugins->add_hook("admin_config_settings_begin", 'reporttothread_load_lang');
+    $plugins->add_hook('admin_config_settings_change', 'reporttothread_settings_check');
     $plugins->add_hook('admin_settings_print_peekers', 'reporttothread_settings_peeker');
 }
 else
@@ -58,7 +59,7 @@ function reporttothread_info()
         $settings_group = (int)$db->fetch_field($query, 'gid');
         if ($settings_group)
         {
-            $info['description'] =  $info['description'] . "<br /><span style=\"line-height: 2.5em;display: inline-block;font-weight: 600;font-style: italic;\"><a href=\"index.php?module=config-settings&amp;action=change&amp;gid=" . $settings_group . "\"><img style=\"vertical-align: sub;\" src=\"./styles/default/images/icons/custom.png\" title=\"" . $db->escape_string($lang->setting_group_reporttothread) . "\" alt=\"settings_icon\" width=\"16\" height=\"16\" />&nbsp;" . $db->escape_string($lang->setting_group_reporttothread) . "</a></span>";
+            $info['description'] .="<br /><span style=\"line-height: 2.5em;display: inline-block;font-weight: 600;font-style: italic;\"><a href=\"index.php?module=config-settings&amp;action=change&amp;gid=" . $settings_group . "\"><img style=\"vertical-align: sub;\" src=\"./styles/default/images/icons/custom.png\" title=\"" . $db->escape_string($lang->setting_group_reporttothread) . "\" alt=\"settings_icon\" width=\"16\" height=\"16\" />&nbsp;" . $db->escape_string($lang->setting_group_reporttothread) . "</a></span>";
         }
     }
 
@@ -108,14 +109,6 @@ function reporttothread_install()
         'autoclose_uid' => array(
             'optionscode' => 'numeric \n min=1',
             'value' => 1
-        ),
-        'autoclose_subject' => array(
-            'optionscode' => 'text',
-            'value' => ''
-        ),
-        'autoclose_message' => array(
-            'optionscode' => 'textarea',
-            'value' => $db->escape_string($lang->setting_reporttothread_autoclose_message_value)
         ),
         'modcp' => array(
             'optionscode' => 'yesno',
@@ -237,11 +230,52 @@ function reporttothread_load_lang()
     $lang->load('reporttothread', true);
 }
 
+function reporttothread_settings_check()
+{
+    global $mybb;
+
+    if (!$mybb->request_method == "post")
+    {
+        return;
+    }
+    else
+    {
+        global $db, $lang;
+
+        $gid = (int)$mybb->input['gid'];
+
+        $query = $db->simple_select('settinggroups', 'gid', "name = 'reporttothread'", array('limit' => 1));
+        $plugin_gid = $db->fetch_field($query, 'gid');
+
+        if ($gid == (int)$plugin_gid)
+        {
+            if (isset($mybb->input['upsetting']['reporttothread_fid']))
+            {
+                if ($mybb->input['upsetting']['reporttothread_fid'] == '-1')
+                {
+                    flash_message($lang->error_setting_reporttothread_fid_no_forum_selected, 'error');
+                    admin_redirect("index.php?module=config-settings&action=change&gid=" . $gid);
+                }
+                elseif ($mybb->input['upsetting']['reporttothread_fid'] != '-1' && !empty($mybb->input['upsetting']['reporttothread_fid']))
+                {
+                    global $cache;
+                    $forum_cache = $cache->read("forums");
+                    if ($forum_cache[$mybb->input['upsetting']['reporttothread_fid']]['type'] == "c")
+                    {
+                        flash_message($lang->error_setting_reporttothread_fid_category_selected, 'error');
+                        admin_redirect("index.php?module=config-settings&action=change&gid=" . $gid);
+                    }
+                }
+            }
+        }
+    }
+}
+
 function reporttothread_settings_peeker(&$peekers)
 {
-    $peekers[] .= 'new Peeker($(".setting_reporttothread_enable"), $("#row_setting_reporttothread_type, #row_setting_reporttothread_type_post_cutoff, #row_setting_reporttothread_fid, #row_setting_reporttothread_autoclose, #row_setting_reporttothread_autoclose_uid, #row_setting_reporttothread_autoclose_subject, #row_setting_reporttothread_autoclose_message, #row_setting_reporttothread_modcp"), 1, true)';
-    $peekers[] .= 'new Peeker($("#setting_reporttothread_type_1"), $("#row_setting_reporttothread_type_post_cutoff"), 1, true)';
-    $peekers[] .= 'new Peeker($(".setting_reporttothread_autoclose"), $("#row_setting_reporttothread_autoclose_uid, #row_setting_reporttothread_autoclose_subject, #row_setting_reporttothread_autoclose_message"), 1, true)';
+    $peekers[] = 'new Peeker($(".setting_reporttothread_enable"), $("#row_setting_reporttothread_type, #row_setting_reporttothread_type_post_cutoff, #row_setting_reporttothread_fid, #row_setting_reporttothread_autoclose, #row_setting_reporttothread_autoclose_uid, #row_setting_reporttothread_modcp"), 1, true)';
+    $peekers[] = 'new Peeker($("#setting_reporttothread_type_1"), $("#row_setting_reporttothread_type_post_cutoff"), 1, true)';
+    $peekers[] = 'new Peeker($(".setting_reporttothread_autoclose"), $("#row_setting_reporttothread_autoclose_uid"), 1, true)';
 }
 
 function reporttothread_run()
@@ -372,7 +406,7 @@ function reporttothread_run()
     $find_tid = reporttothread_search_tid($reported_id, $report_type);
     if ($find_tid)
     {
-        $thread_info = reporttothread_build_post($find_tid, false, $subject, $message);
+        $thread_info = reporttothread_build_post($find_tid, false, $message, $subject);
     }
     else
     {
@@ -428,7 +462,7 @@ function reporttothread_build_thread(string $subject, string $message, int $repo
     }
 }
 
-function reporttothread_build_post(int $tid, bool $closeit = false, string $subject = '', string $message = '')
+function reporttothread_build_post(int $tid, bool $closeit = false, string $message = '', string $subject = '')
 {
     global $mybb, $session;
     require_once MYBB_ROOT . "inc/datahandlers/post.php";
@@ -437,7 +471,7 @@ function reporttothread_build_post(int $tid, bool $closeit = false, string $subj
     $uid = (int)$mybb->user['uid'];
     $username = $mybb->user['username'];
 
-    if ($closeit)
+    if ($closeit !== false)
     {
         if ($mybb->settings['reporttothread_autoclose'] != 1)
         {
@@ -453,18 +487,17 @@ function reporttothread_build_post(int $tid, bool $closeit = false, string $subj
         $user = get_user($uid);
         $username = $user['username'];
 
-        $subject = '';
-        if (!empty($mybb->settings['reporttothread_autoclose_subject']))
-        {
-            $subject = $mybb->settings['reporttothread_autoclose_subject'];
-        }
+        global $lang;
+        $lang->load('reporttothread', true);
 
-        $message = $mybb->settings['reporttothread_autoclose_message'];
-        if (empty($mybb->settings['reporttothread_autoclose_message']))
+        if (!empty($message))
         {
-            global $lang;
-            $lang->load('reporttothread', true);
-            $message = $lang->setting_reporttothread_autoclose_message_value;
+            $lang_string_message = "reporttothread_type_{$message}";
+            $message = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_autoclose_message), $lang->{$lang_string_message});
+        }
+        else
+        {
+            $message = htmlspecialchars_uni($lang->reporttothread_autoclose_message_default);
         }
     }
 
@@ -570,7 +603,7 @@ function reporttothread_deleted_post(int $pid)
 
     if ($tid)
     {
-        reporttothread_build_post($tid, true);
+        reporttothread_build_post($tid, true, 'post');
     }
 }
 
@@ -590,7 +623,7 @@ function reporttothread_deleted_thread(int $threadid)
 
     if ($tid)
     {
-        reporttothread_build_post($tid, true);
+        reporttothread_build_post($tid, true, 'thread');
     }
 }
 
@@ -617,7 +650,7 @@ function reporttothread_deleted_pm()
 
     if ($tid)
     {
-        reporttothread_build_post($tid, true);
+        reporttothread_build_post($tid, true, 'privatemessage');
     }
 }
 
@@ -664,7 +697,7 @@ function reporttothread_mass_deleted_pm()
 
                 if ($tid)
                 {
-                    reporttothread_build_post($tid, true);
+                    reporttothread_build_post($tid, true, 'privatemessage');
                 }
             }
         }
@@ -680,7 +713,7 @@ function reporttothread_deleted_user($users)
 
         if ($tid)
         {
-            reporttothread_build_post($tid, true);
+            reporttothread_build_post($tid, true, 'account');
         }
     }
 }
@@ -699,7 +732,7 @@ function reporttothread_deleted_reputation()
 
     if ($tid)
     {
-        reporttothread_build_post($tid, true);
+        reporttothread_build_post($tid, true, 'reputation');
     }
 }
 
