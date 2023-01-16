@@ -47,8 +47,8 @@ function reporttothread_info()
         "website"       => "https://github.com/SvePu/MyBB-Report-To-Thread",
         "author"        => "SvePu",
         "authorsite"    => "https://github.com/SvePu",
-        "version"       => "1.6",
-        "versioncode"   => "160",
+        "version"       => "1.7",
+        "versioncode"   => "170",
         "codename"      => "reporttothread",
         "compatibility" => "18*"
     );
