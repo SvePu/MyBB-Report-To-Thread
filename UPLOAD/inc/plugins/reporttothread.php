@@ -59,7 +59,7 @@ function reporttothread_info()
         $settings_group = (int)$db->fetch_field($query, 'gid');
         if ($settings_group)
         {
-            $info['description'] .="<br /><span style=\"line-height: 2.5em;display: inline-block;font-weight: 600;font-style: italic;\"><a href=\"index.php?module=config-settings&amp;action=change&amp;gid=" . $settings_group . "\"><img style=\"vertical-align: sub;\" src=\"./styles/default/images/icons/custom.png\" title=\"" . $db->escape_string($lang->setting_group_reporttothread) . "\" alt=\"settings_icon\" width=\"16\" height=\"16\" />&nbsp;" . $db->escape_string($lang->setting_group_reporttothread) . "</a></span>";
+            $info['description'] .= "<br /><span style=\"line-height: 2.5em;display: inline-block;font-weight: 600;font-style: italic;\"><a href=\"index.php?module=config-settings&amp;action=change&amp;gid=" . $settings_group . "\"><img style=\"vertical-align: sub;\" src=\"./styles/default/images/icons/custom.png\" title=\"" . $db->escape_string($lang->setting_group_reporttothread) . "\" alt=\"settings_icon\" width=\"16\" height=\"16\" />&nbsp;" . $db->escape_string($lang->setting_group_reporttothread) . "</a></span>";
         }
     }
 
@@ -201,22 +201,32 @@ function reporttothread_update()
 {
     $plugininfo = reporttothread_info();
 
-    if (!is_array($plugininfo))
+    if (!isset($plugininfo) && !is_array($plugininfo))
     {
         return;
     }
 
-    if (!isset($plugininfo['versioncode']) || (isset($plugininfo['versioncode']) && $plugininfo['versioncode'] < 160))
+    global $cache;
+    $reportedthread = $cache->read('reporttothread');
+    if (isset($reportedthread) && is_array($reportedthread))
     {
-        global $cache;
-        $reportedthread = $cache->read('reporttothread');
-        if ($reportedthread && is_array($reportedthread))
+        $updatereportedthread = array();
+
+        if (!empty($reportedthread) && !isset($reportedthread['version']) && !isset($reportedthread['reports']))
         {
-            $updatereportedthread = array();
             foreach ($reportedthread as $key => $value)
             {
                 $updatereportedthread['reports'][$key] = $value;
             }
+        }
+
+        if (!isset($reportedthread['version']) || (isset($reportedthread['version']) && $reportedthread['version'] != $plugininfo['versioncode']))
+        {
+            $updatereportedthread['version'] = $plugininfo['versioncode'];
+        }
+
+        if (!empty($updatereportedthread))
+        {
             $cache->update('reporttothread', $updatereportedthread);
         }
     }
@@ -738,10 +748,12 @@ function reporttothread_deleted_reputation()
 
 function reporttothread_checkfor_reportpm()
 {
-    global $db, $plugins_cache, $lang;
+    global $plugins_cache;
 
     if (is_array($plugins_cache) && is_array($plugins_cache['active']) && isset($plugins_cache['active']['reportpm']))
     {
+        global $db, $cache, $lang;
+
         $setting_update = array(
             'optionscode' => 'checkbox \n1=' . $db->escape_string($lang->setting_reporttothread_type_1) . '\n2=' . $db->escape_string($lang->setting_reporttothread_type_2) . '\n3=' . $db->escape_string($lang->setting_reporttothread_type_3) . '\n4=' . $db->escape_string($lang->setting_reporttothread_type_4),
             'value' => '1,2,3,4'
@@ -749,6 +761,8 @@ function reporttothread_checkfor_reportpm()
         $db->update_query("settings", $setting_update, "name = 'reporttothread_type'");
 
         rebuild_settings();
+
+        $cache->update_reportreasons();
 
         return true;
     }
