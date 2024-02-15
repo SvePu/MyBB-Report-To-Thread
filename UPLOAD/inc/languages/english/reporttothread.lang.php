@@ -49,7 +49,7 @@ $l['reporttothread_type_account'] = "user account";
 $l['reporttothread_type_reputation'] = "reputation";
 $l['reporttothread_type_privatemessage'] = "private message";
 
-$l['reporttothread_subject'] = "Reported {1} by {2}";
+$l['reporttothread_subject'] = "Reported {1} in \"{3}}\" by {2}";
 $l['reporttothread_comment'] = "User {1} has commented: {2}";
 
 $l['reporttothread_message_post'] = "[b]{1} has reported a {2}.[/b]

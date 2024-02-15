@@ -411,8 +411,7 @@ function reporttothread_run()
             break;
     }
 
-    $subject = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_subject), $rtype, $mybb->user['username']);
-
+    $subject = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_subject), $rtype, $mybb->user['username'], $post['subject']);
     $find_tid = reporttothread_search_tid($reported_id, $report_type);
     if ($find_tid)
     {
