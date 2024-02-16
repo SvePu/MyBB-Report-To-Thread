@@ -113,7 +113,7 @@ function reporttothread_install()
         'modcp' => array(
             'optionscode' => 'yesno',
             'value' => 1
-        )
+        ),
     );
 
     $disporder = 0;
@@ -351,6 +351,7 @@ function reporttothread_run()
             }
             $pd_reported_post = "[quote=\"" . $post['username'] . "\" pid=\"" . $post['pid'] . "\" dateline=\"" . $post['dateline'] . "\"]" . $post['message'] . "[/quote]";
             $message = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_message_post), $mybb->user['username'], $rtype, $pd_thread_link, $pd_forum_link, $reason, $comment, $pd_reported_post);
+            $subject = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_subject_post), $rtype, $mybb->user['username'], $thread['subject']);
             break;
         case 'profile':
             if (!in_array(2, $reporttothread_type))
@@ -362,6 +363,7 @@ function reporttothread_run()
             $rtype = htmlspecialchars_uni($lang->reporttothread_type_profile);
             $userlink = "[url=" . $mybb->settings['bburl'] . "/member.php?action=profile&uid=" . $user['uid'] . "]" . $user['username'] . "[/url]";
             $message = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_message_profile), $mybb->user['username'], $rtype, $userlink, $reason, $comment);
+            $subject = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_subject_profile), $rtype, $mybb->user['username'], $user['username']);
             break;
         case 'reputation':
             if (!in_array(3, $reporttothread_type))
@@ -391,6 +393,7 @@ function reporttothread_run()
                 $reputation_comment = "\n[quote=\"" . $adduser['username'] . "\" dateline=\"" . $reputation['dateline'] . "\"]" . htmlspecialchars_uni($reputation['comments']) . "[/quote]";
             }
             $message = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_message_reputation), $mybb->user['username'], $rtype, $getuserlink, $reason, $comment, $reputation['reputation'], $adduserlink, $reppostlink, $reputation_comment);
+            $subject = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_subject), $rtype, $mybb->user['username']);
             break;
         case 'privatemessage':
             if (!in_array(4, $reporttothread_type))
@@ -408,11 +411,11 @@ function reporttothread_run()
             $senduserlink = "[url=" . $mybb->settings['bburl'] . "/member.php?action=profile&uid=" . $senduser['uid'] . "]" . $senduser['username'] . "[/url]";
             $pm_content = "\n[quote=\"" . $senduser['username'] . "\" dateline=\"" . $pm['dateline'] . "\"][b]" . htmlspecialchars_uni($lang->export_subject) . ":[/b] " . $pm['subject'] . "\n[b]" . htmlspecialchars_uni($lang->export_message) . ":[/b]\n" . $pm['message'] . "[/quote]";
             $message = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_message_privatemessage), $mybb->user['username'], $rtype, $senduserlink, $reason, $comment, $pm_content);
+            $subject = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_subject), $rtype, $mybb->user['username']);
             break;
     }
 
-    $subject = $lang->sprintf(htmlspecialchars_uni($lang->reporttothread_subject), $rtype, $mybb->user['username']);
-
+    
     $find_tid = reporttothread_search_tid($reported_id, $report_type);
     if ($find_tid)
     {

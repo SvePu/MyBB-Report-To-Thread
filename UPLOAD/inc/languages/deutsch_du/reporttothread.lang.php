@@ -49,6 +49,9 @@ $l['reporttothread_type_account'] = "Benutzer Account";
 $l['reporttothread_type_reputation'] = "Bewertung";
 $l['reporttothread_type_privatemessage'] = "Private Nachricht";
 
+$l['reporttothread_subject_post'] = "{1} in {3} gemeldet von {2}";
+$l['reporttothread_subject_profile'] = "{1} {3} gemeldet von {2}";
+
 $l['reporttothread_subject'] = "{1} gemeldet von {2}";
 $l['reporttothread_comment'] = "Nutzer {1} hat dazu kommentiert: {2}";
 
